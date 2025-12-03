@@ -56,6 +56,8 @@ fun AddContact(navController: NavHostController, innerPadding: PaddingValues) {
         )
         Button(onClick = {
 
+            navController.popBackStack()
+
         }) {
             Text("Save")
         }

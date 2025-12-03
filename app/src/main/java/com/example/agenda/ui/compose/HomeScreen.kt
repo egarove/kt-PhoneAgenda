@@ -18,12 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.agenda.ui.Contact
 
 
 @Composable
 fun HomeScreen(navController: NavController, innerPadding: PaddingValues) {
 
-    val contactos = listOf("Pepe", "Juan", "Ana", "Ramon","","","","","","","","","","","","","","")
+    val contactos = mutableListOf(Contact(0, "Eloy", "678548909"))
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
