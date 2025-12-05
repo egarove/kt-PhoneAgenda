@@ -10,12 +10,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.agenda.model.data.Contact
 
 @Composable
-fun Item (navController: NavController) {
+fun Item (navController: NavController, id: Int, contacts: State<List<Contact>>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -28,7 +31,7 @@ fun Item (navController: NavController) {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Rick 987384957")
+            Text(text = contacts.getValue(id).name+" "+contacts.getValue(id).phone)
 
             /*
             Button(

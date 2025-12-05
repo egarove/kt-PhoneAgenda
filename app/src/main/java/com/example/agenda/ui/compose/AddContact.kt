@@ -22,11 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.agenda.ui.viewmodel.ContactFileViewModel
 
 @Composable
-fun AddContact(navController: NavHostController, innerPadding: PaddingValues) {
+fun AddContact(
+    navController: NavHostController,
+    viewModel: ContactFileViewModel,
+    innerPadding: PaddingValues
+) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 

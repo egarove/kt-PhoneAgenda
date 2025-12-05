@@ -3,10 +3,8 @@ package com.example.agenda.ui.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -17,14 +15,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.agenda.ui.Contact
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import com.example.agenda.model.data.Contact
+import com.example.agenda.ui.viewmodel.ContactFileViewModel
 
 
 @Composable
-fun HomeScreen(navController: NavController, innerPadding: PaddingValues) {
+fun HomeScreen(
+    navController: NavController,
+    viewModel: ContactFileViewModel,
+    innerPadding: PaddingValues
+) {
 
-    val contactos = mutableListOf(Contact(0, "Eloy", "678548909"))
+    LaunchedEffect(Unit) {
+        viewModel.readContacts()
+    }
+
+    val contacts = viewModel.contacts.collectAsState()
 
 
     Column(
@@ -34,7 +42,7 @@ fun HomeScreen(navController: NavController, innerPadding: PaddingValues) {
             .fillMaxSize()
             .padding(innerPadding)
     ) {
-        if (contactos.isEmpty()) {
+        if (contacts.value.isEmpty()) {
             Text("No contacts found.")
         } else {
             LazyColumn(
@@ -43,9 +51,11 @@ fun HomeScreen(navController: NavController, innerPadding: PaddingValues) {
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                items(items = contactos) { contacto ->
+                items(items = contacts.value) { contact ->
                     Item(
-                        navController
+                        navController,
+                        id = contact.id,
+                        contacts = contacts
                     )
                 }
             }
