@@ -75,14 +75,13 @@ fun AddContact(
             var newId = 0
             viewModel.readContacts()
             var contacts = viewModel.contacts
-
-            for (contact in contacts.value) {
-                if (contact.id > newId) {
-                    newId = contact.id
-                }
+            var ultimoContact = contacts.value.lastOrNull()
+            if(ultimoContact == null){
+                newId = 0
+            } else{
+                newId = ultimoContact.id+1
             }
 
-            newId++
             var addContact= Contact(id = newId, name = name, phoneNumber = phone)
             scope.launch {
                 repository.writeContact(addContact)

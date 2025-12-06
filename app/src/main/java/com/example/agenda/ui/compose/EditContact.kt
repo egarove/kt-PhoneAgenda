@@ -41,8 +41,8 @@ fun EditContact(
 
     viewModel.readContacts()
 
-    var name by remember { mutableStateOf(viewModel.contacts.value.get(id-1).name) }
-    var phone by remember { mutableStateOf(viewModel.contacts.value.get(id-1).phoneNumber) }
+    var name by remember { mutableStateOf(viewModel.contacts.value.get(id).name) }
+    var phone by remember { mutableStateOf(viewModel.contacts.value.get(id).phoneNumber) }
     val context = LocalContext.current
     val repository = ContactFileRepository(context)
     val scope = rememberCoroutineScope() //para poder lanzar las corrutinas
@@ -79,7 +79,7 @@ fun EditContact(
             }
             navController.popBackStack()
         }) {
-            Text("Edit")
+            Text("Save")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
