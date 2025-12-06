@@ -9,9 +9,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.agenda.model.data.Contact
 import com.example.agenda.model.repository.ContactFileRepository
 import com.example.agenda.ui.viewmodel.ContactFileViewModel
 
@@ -48,8 +51,18 @@ fun Navigation(innerPadding: PaddingValues) {
         composable("add-contact") {
             AddContact(navController, viewModel, innerPadding)
         }
-        composable("edit-contact") {
-            EditContact(navController, viewModel, innerPadding)
+        composable(
+            route = "edit-contact/{contactId}",
+            arguments = listOf(navArgument("contactId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val contactId = backStackEntry.arguments?.getInt("contactId") ?: 0
+
+            EditContact(
+                navController = navController,
+                viewModel = viewModel,
+                innerPadding = innerPadding,
+                id = contactId
+            )
         }
     }
 }

@@ -17,22 +17,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.agenda.model.data.Contact
+import com.example.agenda.model.repository.ContactFileRepository
 import com.example.agenda.ui.viewmodel.ContactFileViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditContact(
     navController: NavController,
     viewModel: ContactFileViewModel,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    id: Int
 ) {
-    var name by remember { mutableStateOf("Rick") }
-    var phone by remember { mutableStateOf("984728937") }
+
+    viewModel.readContacts()
+
+    var name by remember { mutableStateOf(viewModel.contacts.value.get(id-1).name) }
+    var phone by remember { mutableStateOf(viewModel.contacts.value.get(id-1).phoneNumber) }
+    val context = LocalContext.current
+    val repository = ContactFileRepository(context)
+    val scope = rememberCoroutineScope() //para poder lanzar las corrutinas
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,17 +71,17 @@ fun EditContact(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone) //teclado solo numerico
         )
-        Button(onClick = {
 
+        Button(onClick = {
+            var modifyContact= Contact(id = viewModel.contacts.value.get(id).id, name = name, phoneNumber = phone)
+            scope.launch {
+                repository.editContact(modifyContact)
+            }
+            navController.popBackStack()
         }) {
             Text("Edit")
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = {
 
-        }) {
-            Text("Delete")
-        }
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = { navController.popBackStack() }) {
             Text("Back")

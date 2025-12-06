@@ -31,7 +31,7 @@ class ContactFileRepository (private val context: Context){
                     val contact = Contact(
                         id = parts.get(0).toInt(),
                         name = parts.get(1),
-                        phone = parts.get(2)
+                        phoneNumber = parts.get(2)
                     )
                     contactos.add(contact)
                 }
@@ -43,26 +43,58 @@ class ContactFileRepository (private val context: Context){
     suspend fun writeContact(line: Contact) {
         return withContext(Dispatchers.IO){
             val file = getFile()
-            file.appendText(line.id.toString()+","+line.name+","+line.phone+ "\n")
-        }
-    }
-   /*
-    suspend fun editContact(contact: Contact) {
-        return withContext(Dispatchers.IO) {
-            delay(1000)
-            val file = getFile()
-            file.appendText(line + "\n")
+            file.appendText(line.id.toString()+","+line.name+","+line.phoneNumber+ "\n")
         }
     }
 
-    /*
-    suspend fun deleteContact(contact: Contact) {
-        return withContext(Dispatchers.IO) {
-            delay(1000)
-            val file = getFile()
-            file.appendText(line + "\n")
+    suspend fun editContact(editContact: Contact) {
+        withContext(Dispatchers.IO) {
+            val contactos = readContacts().toMutableList()
+
+            val index = contactos.indexOfFirst { it.id == editContact.id }
+
+            if (index != -1) {
+                contactos[index] = editContact
+
+                //Reescribimos el archivo
+                val file = getFile()
+                file.writeText("")
+
+                contactos.forEach { contact ->
+                    file.appendText(
+                        contact.id.toString() + "," +
+                                contact.name + "," +
+                                contact.phoneNumber + "\n"
+                    )
+                }
+            }
         }
     }
 
-     */*/
+    suspend fun deleteContact(deleteContact: Contact) {
+        withContext(Dispatchers.IO) {
+
+            val contactos = readContacts().toMutableList()
+            val nuevaLista = mutableListOf<Contact>() //con los contactos != deleteContac.id
+
+            for (contact in contactos) {
+                if (contact.id != deleteContact.id) {
+                    nuevaLista.add(contact)
+                }
+            }
+
+            // Reescribimos el archivo
+            val file = getFile()
+            file.writeText("")
+
+            for (contact in nuevaLista) {
+                file.appendText(
+                    contact.id.toString() + "," +
+                            contact.name + "," +
+                            contact.phoneNumber + "\n"
+                )
+            }
+        }
+    }
+
 }

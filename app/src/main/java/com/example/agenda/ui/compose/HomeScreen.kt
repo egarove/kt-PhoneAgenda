@@ -17,7 +17,9 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import com.example.agenda.model.data.Contact
+import com.example.agenda.model.repository.ContactFileRepository
 import com.example.agenda.ui.viewmodel.ContactFileViewModel
 
 
@@ -33,7 +35,8 @@ fun HomeScreen(
     }
 
     val contacts = viewModel.contacts.collectAsState()
-
+    val context = LocalContext.current
+    val repository = ContactFileRepository(context)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,13 +56,14 @@ fun HomeScreen(
             ) {
                 items(items = contacts.value) { contact ->
                     Item(
-                        navController,
-                        id = contact.id,
-                        contacts = contacts
+                        navController = navController,
+                        contact = contact,
+                        repository
                     )
                 }
             }
         }
+
         Button(onClick = { navController.navigate("add-contact") }) {
             Text("ADD Contact")
         }

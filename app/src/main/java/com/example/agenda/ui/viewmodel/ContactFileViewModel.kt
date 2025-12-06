@@ -11,11 +11,12 @@ import kotlinx.coroutines.launch
 class ContactFileViewModel (private val repository: ContactFileRepository) : ViewModel() {
 
     private val _contacts = MutableStateFlow<List<Contact>>(emptyList())
-    val contacts = _contacts.asStateFlow() //hacemos una copia PUBLICA para que la vea Compose
+    var contacts = _contacts.asStateFlow() //hacemos una copia PUBLICA para que la vea Compose
 
     fun readContacts () {
         viewModelScope.launch {
             _contacts.value = repository.readContacts()
+            contacts = _contacts
         }
     }
 }

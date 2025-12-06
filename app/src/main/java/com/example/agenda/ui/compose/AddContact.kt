@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberPlatformOverscrollFactory
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -17,13 +18,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.agenda.model.data.Contact
+import com.example.agenda.model.repository.ContactFileRepository
 import com.example.agenda.ui.viewmodel.ContactFileViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddContact(
@@ -33,6 +39,10 @@ fun AddContact(
 ) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val repository = ContactFileRepository(context)
+    val scope = rememberCoroutineScope() //para poder lanzar las corrutinas
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,8 +68,25 @@ fun AddContact(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone) //teclado solo numerico
         )
-        Button(onClick = {
 
+
+        Button(onClick = {
+            //Buscamos el ultimo id y le ponemos +1
+            var newId = 0
+            viewModel.readContacts()
+            var contacts = viewModel.contacts
+
+            for (contact in contacts.value) {
+                if (contact.id > newId) {
+                    newId = contact.id
+                }
+            }
+
+            newId++
+            var addContact= Contact(id = newId, name = name, phoneNumber = phone)
+            scope.launch {
+                repository.writeContact(addContact)
+            }
             navController.popBackStack()
 
         }) {
