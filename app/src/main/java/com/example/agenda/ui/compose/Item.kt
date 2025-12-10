@@ -61,7 +61,10 @@ fun Item(
 
                 // Botón Edit
                 Button(
-                    onClick = { navController.navigate("edit-contact/${contact.id}") },
+                    onClick = {
+                        val index: Int = contact.id
+                        navController.navigate("edit-contact/$index")
+                              },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text("Edit")
