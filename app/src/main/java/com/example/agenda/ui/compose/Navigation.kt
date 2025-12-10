@@ -51,7 +51,7 @@ fun Navigation(innerPadding: PaddingValues) {
         composable("add-contact") {
             AddContact(navController, viewModel, innerPadding)
         }
-        composable( "edit-contact/{contactId}"){
+        composable( "edit-contact/{index}"){
             backStackEntry ->
             val contactId = backStackEntry.arguments?.getString("index")?.toInt() ?: 0
             EditContact(navController = navController,viewModel = viewModel,innerPadding = innerPadding,id = contactId)
